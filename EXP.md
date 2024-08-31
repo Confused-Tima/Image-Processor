@@ -1,7 +1,7 @@
 # Pheww!!! Finally done. 😮‍💨
 
 (Press `ctrl+shift+v` to view better if in vscode)
-(Apologies if my grammar is not correct or spelling mistakes, it's 2 in the morning. And I've covered only the main parts of the whole app and left lot of insignificant stuff)
+(Apologies if my grammar is not correct or spelling mistakes, it's 2 in the morning. And I've covered only the main parts of the whole app and left lot of insignificant stuff like formatting/validating the methods in csv, or reading from .env files effectively, etc..)
 
 It is 12 in the midnight. I think I've been working on this for the entire day.
 It was a good project but the time limit was too low(1 day).
