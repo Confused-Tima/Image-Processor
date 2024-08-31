@@ -1,13 +1,25 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from typing import Any, Union, TypeAlias, Dict
 
 import redis
 from rq import Queue
+from pydantic import BaseModel
+from rq.job import Job
+from rq.exceptions import NoSuchJobError
 
 from app.configs import settings, RQueues
-from app.utils.common import SingletonMeta
+from app.utils.common_utils import SingletonMeta
 
 Q: TypeAlias = Union[RQueues, str]
+
+
+class CustomJobStatus(BaseModel):
+    result: Union[str | None] = None
+    created_at: Union[datetime | None] = None
+    started_at: Union[datetime | None] = None
+    ended_at: Union[datetime | None] = None
+    error: Union[NoSuchJobError | None] = None
 
 
 class RedisConnection(metaclass=SingletonMeta):
@@ -73,6 +85,20 @@ class RedisConnection(metaclass=SingletonMeta):
         Queue | None
         """
         return self._queues.get(queue, default)
+
+    def get_job_status(self, job_id: str):
+        try:
+            job = Job.fetch(job_id, self.redis)
+            job_status = CustomJobStatus(
+                result=job.result,
+                created_at=job.created_at,
+                started_at=job.started_at,
+                ended_at=job.ended_at,
+            )
+        except NoSuchJobError as e:
+            job_status = CustomJobStatus(error=e)
+
+        return job_status
 
     def shutdown(self) -> None:
         self.redis.close()

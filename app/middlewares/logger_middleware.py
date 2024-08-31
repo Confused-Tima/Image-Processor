@@ -12,6 +12,7 @@ from app.configs import settings
 class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable[..., Response]):
         """Middleware to log the incoming requests to .log file"""
+
         # logging the request
         start_time = time.time()
         data = await request.body()

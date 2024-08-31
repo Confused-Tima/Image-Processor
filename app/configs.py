@@ -61,4 +61,5 @@ class MainSettings(BaseSettings):
         extras = "allow"
 
 
+# Initialize the settings
 settings = MainSettings()

@@ -13,6 +13,8 @@ uvicorn = "^0.30.6"
 redis = "^5.0.8"
 rq = "^1.16.2"
 pydantic-settings = "^2.4.0"
+pandas = "^2.2.2"
+pandera = "^0.20.3"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -26,7 +28,7 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.flake8]
-ignore = ["E203", "W503", "W504"]
+ignore = ["E203", "W503", "W504", "B008"]
 max-line-length = 88
 exlcude = [".git", "__pycache__", "build", "dist", ".eggs"]
 

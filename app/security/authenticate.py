@@ -28,6 +28,7 @@ async def authenticate_api_key(
     HTTPException
         403 Authentication Error
     """
+
     if settings.api_key:
         if api_key == settings.api_key:
             return api_key
