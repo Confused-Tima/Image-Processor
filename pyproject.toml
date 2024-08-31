@@ -15,6 +15,11 @@ rq = "^1.16.2"
 pydantic-settings = "^2.4.0"
 pandas = "^2.2.2"
 pandera = "^0.20.3"
+python-multipart = "^0.0.9"
+rq-dashboard = "^0.7.1.2"
+requests = "^2.32.3"
+aioboto3 = "^13.1.1"
+pillow = "^10.4.0"
 
 
 [tool.poetry.group.dev.dependencies]

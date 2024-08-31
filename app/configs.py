@@ -1,11 +1,6 @@
 import os
-from enum import Enum
 
 from pydantic_settings import BaseSettings
-
-
-class RQueues(Enum):
-    IMAGE_PROCESSING_Q = os.getenv("IMAGE_PROCESSING_Q", "image_processing_q")
 
 
 class MainSettings(BaseSettings):
@@ -20,21 +15,6 @@ class MainSettings(BaseSettings):
     is_debug_mode: bool = False  # If in debug mode
     api_prefix: str = "/api"
 
-    # Redis settings
-    redis_host: str = "localhost"
-    redis_port: str = "6379"
-    redis_db: str = "0"
-
-    @property
-    def redis_url(self) -> str:
-        return "redis://{self.redis_host}:{self.redis_port}/{self.redis_db}"
-
-    # How long are we going to persist the results(for retrieval)
-    results_persistance: int = 50 * 24 * 60 * 60
-
-    # How long do a job gets to run after dequeue (default 180s)
-    job_timeout: int = 24 * 60 * 60
-
     api_key_name: str = "x-api-key"
     api_key: str | None = None
 
@@ -46,7 +26,7 @@ class MainSettings(BaseSettings):
         return (
             "/logs"
             if self.is_virtual_env
-            else os.path.join(os.getcwd(), "api", "logs")
+            else os.path.join(os.getcwd(), "logs")
         )
 
     # API request/response logger format
@@ -58,7 +38,7 @@ class MainSettings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
-        extras = "allow"
+        extra = "allow"
 
 
 # Initialize the settings

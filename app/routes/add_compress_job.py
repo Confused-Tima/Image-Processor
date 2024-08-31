@@ -6,11 +6,11 @@ from rq.job import JobStatus
 from fastapi import APIRouter, UploadFile, File, Depends
 
 from app.logger import logger
-from app.configs import RQueues
+from redis_connection.configs import RQueues
+from redis_connection.add_job import enqueue_job, RedisConnection
 from app.security.authenticate import authenticate_api_key
 from app.exceptions.custom_http_exceptions import raise_HTTP_422
-from redis_connection.add_job import enqueue_job, RedisConnection
-from app.utils.common_utils import csv_urls_converter, df_converter
+from app.utils.base_utils import csv_urls_converter, df_converter
 from app.schemas.compression_schema import (
     csv_schema,
     JobStatusRequest,
@@ -37,6 +37,7 @@ req_fields = ", ".join(
     dependencies=[Depends(authenticate_api_key)],
 )
 def add_job_with_file(
+    callback: str,
     file: UploadFile = File(
         description=(
             f"Give all required fields({req_fields}) "
@@ -66,7 +67,7 @@ def add_job_with_file(
     return CompressionJobResponse(
         job_id=enqueue_job(
             RQueues.IMAGE_PROCESSING_Q,
-            {"data": data},
+            {"data": data, "callback": callback},
         ),
         job_status=JobStatus.QUEUED
     )
@@ -95,16 +96,10 @@ def get_job_status(status_req: JobStatusRequest):
         else status.ended_at
     )
 
-    error = (
-        str(status.error)
-        if status.error
-        else status.error
-    )
-
     return JobStatusResponse(
         result=status.result,
         created_at=created_at,
         started_at=started_at,
         ended_at=ended_at,
-        error=error
+        error=status.error,
     )

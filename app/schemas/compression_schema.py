@@ -39,8 +39,8 @@ class JobStatusRequest(BaseModel):
 
 
 class JobStatusResponse(BaseModel):
-    result: str
-    created_at: str
-    started_at: str
-    ended_at: str
-    error: str
+    result: str | None
+    created_at: str | None
+    started_at: str | None
+    ended_at: str | None
+    error: str | None

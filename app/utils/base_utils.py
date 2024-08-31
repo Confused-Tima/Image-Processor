@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import threading
 from typing import Callable
 from urllib.parse import urlparse, ParseResult
 
@@ -106,21 +105,3 @@ def csv_urls_converter(csv_urls: str | None) -> list[ParseResult]:
         list_urls[i] = parsed_url
 
     return list_urls
-
-
-class SingletonMeta(type):
-    """Meta class to create other singleton classes"""
-
-    __instances = {}
-    _lock = threading.Lock()
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls.__instances:
-            with cls._lock:
-                if cls not in cls.__instances:
-                    cls.__instances[cls] = super(
-                        SingletonMeta,
-                        cls
-                    ).__call__(*args, **kwargs)
-
-        return cls.__instances[cls]

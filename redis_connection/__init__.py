@@ -1,31 +1,23 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
 from typing import Any, Union, TypeAlias, Dict
 
 import redis
 from rq import Queue
-from pydantic import BaseModel
 from rq.job import Job
 from rq.exceptions import NoSuchJobError
 
-from app.configs import settings, RQueues
-from app.utils.common_utils import SingletonMeta
+from global_utils import SingletonMeta
+from .configs import RQueues, redis_settings, CustomJobStatus
 
 Q: TypeAlias = Union[RQueues, str]
-
-
-class CustomJobStatus(BaseModel):
-    result: Union[str | None] = None
-    created_at: Union[datetime | None] = None
-    started_at: Union[datetime | None] = None
-    ended_at: Union[datetime | None] = None
-    error: Union[NoSuchJobError | None] = None
 
 
 class RedisConnection(metaclass=SingletonMeta):
     """Redis connection manager"""
     def __init__(self) -> None:
-        self.redis = redis.ConnectionPool.from_url(settings.redis_url, encoding="utf8")
+        self.redis = redis.from_url(
+            redis_settings.redis_url, encoding="utf8"
+        )
         self._queues = {
             q.value: Queue(q.value, connection=self.redis)
             for q in RQueues.__members__.values()
@@ -96,13 +88,11 @@ class RedisConnection(metaclass=SingletonMeta):
                 ended_at=job.ended_at,
             )
         except NoSuchJobError as e:
-            job_status = CustomJobStatus(error=e)
+            job_status = CustomJobStatus(error=str(e))
+        except Exception as e:
+            return CustomJobStatus(error=str(e))
 
         return job_status
 
     def shutdown(self) -> None:
         self.redis.close()
-
-
-def dummy_task(*args, **kwargs):
-    return None
