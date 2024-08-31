@@ -70,7 +70,8 @@ async def upload_data_to_s3(s3_client, data: dict):
             )
         )
 
-    return await asyncio.gather(*tasks)
+    data["output_images"] = await asyncio.gather(*tasks)
+    return data
 
 
 async def single_row_image_process(
@@ -114,14 +115,16 @@ def bulk_image_compression(data: dict):
     data: list[dict] = data["data"]
 
     status = {}
+    data = []
     try:
-        asyncio.run(start_image_compression(data))
+        data = asyncio.run(start_image_compression(data))
     except Exception:
         status = {"status": "error"}
 
     if not status:
         status = {"status": "completed"}
 
+    status
     # Send callback if the data processed successfully
     requests.post(callback, json=data)
 

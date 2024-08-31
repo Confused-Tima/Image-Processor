@@ -35,6 +35,7 @@ req_fields = ", ".join(
 @router.post(
     "/v1/compress-images",
     dependencies=[Depends(authenticate_api_key)],
+    response_model=CompressionJobResponse,
 )
 def add_job_with_file(
     callback: str,
@@ -73,11 +74,12 @@ def add_job_with_file(
     )
 
 
-@router.post(
+@router.get(
     "/v1/fetch-job-status",
     dependencies=[Depends(authenticate_api_key)],
+    response_model=JobStatusResponse,
 )
-def get_job_status(status_req: JobStatusRequest):
+def get_job_status(status_req: JobStatusRequest = Depends(JobStatusRequest)):
     status = redis_conn.get_job_status(status_req.job_id)
     created_at = (
         status.created_at.isoformat()
@@ -97,6 +99,7 @@ def get_job_status(status_req: JobStatusRequest):
     )
 
     return JobStatusResponse(
+        status=status.status,
         result=status.result,
         created_at=created_at,
         started_at=started_at,

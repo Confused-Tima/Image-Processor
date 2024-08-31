@@ -8,6 +8,7 @@ from pydantic_settings import BaseSettings
 
 
 class CustomJobStatus(BaseModel):
+    status: Union[str | None] = None
     result: Union[str | None] = None
     created_at: Union[datetime | None] = None
     started_at: Union[datetime | None] = None

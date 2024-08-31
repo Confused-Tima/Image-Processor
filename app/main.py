@@ -31,4 +31,4 @@ def health_check(_=Depends(authenticate_api_key)):
     return {"status": "Healthy"}
 
 
-app.include_router(add_compress_job.router)
+app.include_router(add_compress_job.router, prefix=settings.api_prefix)

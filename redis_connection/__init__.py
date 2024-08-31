@@ -86,6 +86,7 @@ class RedisConnection(metaclass=SingletonMeta):
                 created_at=job.created_at,
                 started_at=job.started_at,
                 ended_at=job.ended_at,
+                status=job.get_status()
             )
         except NoSuchJobError as e:
             job_status = CustomJobStatus(error=str(e))
